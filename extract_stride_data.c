@@ -36,77 +36,6 @@ float calculate_mean(float *arr, int n)
 	return total/((float) n);
 }
 
-/*
- * Performs unsupervised learning on *arr to find two mean clusters.
- * Use the higher cluster value found in either thresholds[0] or thresholds[1]
- * to perform peak detection.
- */
-int 
-find_thresholds(
-		float *arr, 	// signal
-		int n_samples, 	// number of samples in the signal
-		float e, 	// stop conidition for unsupervised learning
-		// thresholds[2]
-		// must intitialized before passing to this function
-		// and used to store the return values of this function.
-		float *thresholds
-		)
-{
-	float c1, c2;
-	float last_c1, last_c2;
-	float *class1, *class2;
-	int i, n_count1, n_count2;
-
-	if (n_samples < 2) {
-		fprintf(stderr, 
-				"Not enough samples in array"
-			        " to detect thresholds.\n"
-				);
-		return -1;
-	}
-
-	c1 = arr[0];
-	c2 = arr[1];
-	last_c1 = c1;
-	last_c2 = c2;
-	class1 = (float *) malloc(sizeof(float) * n_samples);
-	class2 = (float *) malloc(sizeof(float) * n_samples);
-	while (1) {
-		n_count1 = 0;
-		n_count2 = 0;
-		clear_buffer(class1, 0.0f, n_samples);
-		clear_buffer(class2, 0.0f, n_samples);
-		for (i = 0; i < n_samples; i++) {
-			if (fabsf(c1 - arr[i]) < fabsf(c2 - arr[i])) {
-				class1[n_count1] = arr[i];
-				n_count1++;
-			} else {
-				class2[n_count2] = arr[i];
-				n_count2++;
-			}
-		}
-		if (n_count1 > 0) {
-			c1 = calculate_mean(class1, n_count1);
-		} else {
-			c1 = 0.0f;
-		}
-		if (n_count2 > 0) {
-			c2 = calculate_mean(class2, n_count2);
-		} else {
-			c2 = 0.0f;
-		}
-		if ( (fabsf(last_c2 - c2) < e) && (fabsf(last_c1 - c1) < e) ) {
-			thresholds[0] = c1;
-			thresholds[1] = c2;
-			free(class1);
-			free(class2);
-			return 0;
-		}
-		last_c1 = c1;
-		last_c2 = c2;
-	}
-}
-
 int 
 find_peaks_and_troughs(
 		float *arr, 	// signal 
@@ -193,9 +122,8 @@ int main(int argc, char **argv)
 	int N_SAMPLES;
 
 	/* Variables for storing the data and storing the return values */
-	float *t, *x, *y, *z; // variables for data collected from input file
-	/* Variables for threshold calculation */
-	float thresholds[2], pk_threshold;
+	float *t, *x, *y, *z; 	// variables for data collected from input file
+	float pk_threshold;		// pk-threshold value
        	/* Variables for peak-trough detection */	
 	float *P_i; 	// indicies of each peak found by peak detection
 	float *T_i; 	// indicies of each trough found by trough detection
@@ -283,24 +211,11 @@ int main(int argc, char **argv)
 	fclose(fp);
 
 
-	/* Find peak thresholds */
-	rv = find_thresholds(x, N_SAMPLES, 1e-5, thresholds);
-	if (rv < 0) {
-		fprintf(stderr, "find_thresholds failed\n");
-		exit(EXIT_FAILURE);
-	}
-
-	printf("THRESHOLDS: %f %f\n", thresholds[0], thresholds[1]);
-
-	/* From detected thresholds, find the max(abs(thresholds)) */
-	if (fabsf(thresholds[0]) > fabsf(thresholds[1])) {
-		pk_threshold = fabsf(thresholds[0]);
-	} else {
-		pk_threshold = fabsf(thresholds[1]);
-	}
+	/* YOU MAY MODIFY THIS PARAMETER */
+	pk_threshold = 1.75f;
 
 	/* 
-	 * From detected thresholds, 
+	 * From selected thresholds, 
 	 * find indicies of peaks
 	 * find indicies of troughs
 	 */
