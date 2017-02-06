@@ -123,7 +123,7 @@ int main(int argc, char **argv)
 
 	/* Variables for storing the data and storing the return values */
 	float *t, *x, *y, *z; 	// variables for data collected from input file
-	float pk_threshold;		// pk-threshold value
+	float pk_threshold;	// pk-threshold value
        	/* Variables for peak-trough detection */	
 	float *P_i; 	// indicies of each peak found by peak detection
 	float *T_i; 	// indicies of each trough found by trough detection
@@ -143,6 +143,7 @@ int main(int argc, char **argv)
 	 * Check if the user entered the correct command line arguments
 	 * Usage: 
 	 * ./extract_stride_data <ifile_name> <output_peaks> <output_strides>
+	 * 				<threshold_value_float>
 	 * Or 
 	 * ./extract_stride_data
 	 */
@@ -159,11 +160,20 @@ int main(int argc, char **argv)
 		ofile_st_name = (char *) malloc(sizeof(char) * BUFF_SIZE);
 		memset(ofile_st_name, 0, BUFF_SIZE);
 		snprintf(ofile_st_name, BUFF_SIZE, "acceleration_strides.csv");
+		pk_threshold = 6.7;
 	} else {
 		ifile_name = argv[1];
 		ofile_pt_name = argv[2];
 		ofile_st_name = argv[3];
+		pk_threshold = atof(argv[4]);
 	}
+
+	printf("Arguments used:\n\t%s=%s\n\t%s=%s\n\t%s=%s\n\t%s=%f\n",
+			"ifile_name", ifile_name,
+			"ofile_peak_trough_name", ofile_pt_name,
+			"ofile_stride_name", ofile_st_name,
+			"peak_threshold", pk_threshold
+	      );
 
 	/* open the input file */
 	printf("Attempting to read from file \'%s\'.\n", ifile_name);
@@ -209,10 +219,6 @@ int main(int argc, char **argv)
 		i++;
 	}
 	fclose(fp);
-
-
-	/* YOU MAY MODIFY THIS PARAMETER */
-	pk_threshold = 1.75f;
 
 	/* 
 	 * From selected thresholds, 
