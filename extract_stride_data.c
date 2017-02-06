@@ -225,7 +225,6 @@ int main(int argc, char **argv)
 	 * find indicies of peaks
 	 * find indicies of troughs
 	 */
-	printf("THRESHOLD SELECTED: %f\n", pk_threshold);
 	P_i = (float *) malloc(sizeof(float) * N_SAMPLES);
 	T_i = (float *) malloc(sizeof(float) * N_SAMPLES);
 	rv = find_peaks_and_troughs(
@@ -310,6 +309,8 @@ int main(int argc, char **argv)
 		       );
 	}
 	fclose(fp);
+
+	printf("extract_stride_data completed successfuly. Exiting.\n");
 
 	return 0;
 }
