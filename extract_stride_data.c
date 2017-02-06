@@ -147,7 +147,7 @@ int main(int argc, char **argv)
 	 * Or 
 	 * ./extract_stride_data
 	 */
-	if (argc != 4) {
+	if (argc != 5) {
 		ifile_name = (char *) malloc(sizeof(char) * BUFF_SIZE);
 		memset(ifile_name, 0, BUFF_SIZE);
 		snprintf(ifile_name, 
