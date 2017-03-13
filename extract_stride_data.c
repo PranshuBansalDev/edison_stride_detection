@@ -12,7 +12,7 @@
 /*
  * sets first <n> values in <*arr> to <val>
  */
-void clear_buffer(float *arr, float val, int n) 
+void clear_buffer(double *arr, double val, int n) 
 {
 	int i;
 	for (i = 0; i < n; i++) {
@@ -23,9 +23,9 @@ void clear_buffer(float *arr, float val, int n)
 /*
  * Caculates mean of first <n> samples in <*arr>
  */
-float calculate_mean(float *arr, int n)
+double calculate_mean(double *arr, int n)
 {
-	float total;
+	double total;
 	int i;
 
 	total = 0.0f;
@@ -33,17 +33,17 @@ float calculate_mean(float *arr, int n)
 		total += arr[i];
 	}
 
-	return total/((float) n);
+	return total/((double) n);
 }
 
 int 
 find_peaks_and_troughs(
-		float *arr, 	// signal 
+		double *arr, 	// signal 
 		int n_samples, 	// number of samples present in the signal
-		float E, 	// threshold for peak detection
+		double E, 	// threshold for peak detection
 		// arrays that will store the indicies of the located
 		// peaks and troughs
-		float *P, float *T,
+		double *P, double *T,
 		// number of peaks (n_P) and number of troughs (n_T)
 		// found in the data set *arr
 		int *n_P, int *n_T
@@ -122,12 +122,12 @@ int main(int argc, char **argv)
 	int N_SAMPLES;
 
 	/* Variables for storing the data and storing the return values */
-	float *t, *x, *y, *z; 	// variables for data collected from input file
-	float pk_threshold;	// pk-threshold value
+	double *t, *x, *y, *z; 	// variables for data collected from input file
+	double pk_threshold;	// pk-threshold value
        	/* Variables for peak-trough detection */	
-	float *P_i; 	// indicies of each peak found by peak detection
-	float *T_i; 	// indicies of each trough found by trough detection
-	float *S_i; 	// indicies of the start of each stride
+	double *P_i; 	// indicies of each peak found by peak detection
+	double *T_i; 	// indicies of each trough found by trough detection
+	double *S_i; 	// indicies of the start of each stride
 	int n_P; 	// number of peaks
 	int n_T; 	// number of troughs
 	int n_S; 	// number of strides
@@ -143,7 +143,7 @@ int main(int argc, char **argv)
 	 * Check if the user entered the correct command line arguments
 	 * Usage: 
 	 * ./extract_stride_data <ifile_name> <output_peaks> <output_strides>
-	 * 				<threshold_value_float>
+	 * 				<threshold_value_double>
 	 * Or 
 	 * ./extract_stride_data
 	 */
@@ -168,7 +168,7 @@ int main(int argc, char **argv)
 		pk_threshold = atof(argv[4]);
 	}
 
-	printf("Arguments used:\n\t%s=%s\n\t%s=%s\n\t%s=%s\n\t%s=%f\n",
+	printf("Arguments used:\n\t%s=%s\n\t%s=%s\n\t%s=%s\n\t%s=%lf\n",
 			"ifile_name", ifile_name,
 			"ofile_peak_trough_name", ofile_pt_name,
 			"ofile_stride_name", ofile_st_name,
@@ -199,13 +199,13 @@ int main(int argc, char **argv)
 
 	/* start reading the data from the file into the data structures */
 	i = 0;
-	t = (float *) malloc(sizeof(float) * N_SAMPLES);
-	x = (float *) malloc(sizeof(float) * N_SAMPLES);
-	y = (float *) malloc(sizeof(float) * N_SAMPLES);
-	z = (float *) malloc(sizeof(float) * N_SAMPLES);
+	t = (double *) malloc(sizeof(double) * N_SAMPLES);
+	x = (double *) malloc(sizeof(double) * N_SAMPLES);
+	y = (double *) malloc(sizeof(double) * N_SAMPLES);
+	z = (double *) malloc(sizeof(double) * N_SAMPLES);
 	while ((read = getline(&line, &len, fp)) != -1) {
 		/* parse the data */
-		rv = sscanf(line, "%f,%f,%f,%f\n", &t[i], &x[i], &y[i], &z[i]);
+		rv = sscanf(line, "%lf,%lf,%lf,%lf\n", &t[i], &x[i], &y[i], &z[i]);
 		if (rv != 4) {
 			fprintf(stderr,
 					"%s %d \'%s\'. %s.\n",
@@ -225,8 +225,8 @@ int main(int argc, char **argv)
 	 * find indicies of peaks
 	 * find indicies of troughs
 	 */
-	P_i = (float *) malloc(sizeof(float) * N_SAMPLES);
-	T_i = (float *) malloc(sizeof(float) * N_SAMPLES);
+	P_i = (double *) malloc(sizeof(double) * N_SAMPLES);
+	T_i = (double *) malloc(sizeof(double) * N_SAMPLES);
 	rv = find_peaks_and_troughs(
 			x, 
 			N_SAMPLES, 
